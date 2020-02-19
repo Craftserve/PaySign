@@ -1,0 +1,4 @@
+# Duration of ticks after which the current is going to be cut.
+delay: 30
+# Allow decimal numbers in prices?
+allow-decimals: true

@@ -1,0 +1,26 @@
+name: '${project.name}'
+version: '${project.version}'
+authors: ${authors}
+website: '${project.url}'
+main: pl.craftserve.paysign.PaySignPlugin
+api-version: '${apiVersion}'
+description: Sign payments for using redstone mechanism.
+depend: [Vault]
+
+permissions:
+  craftservepaysign.*:
+    description: 'Gives access to everything.'
+    default: op
+    children:
+    - craftservepaysign.ad
+    - craftservepaysign.bypass
+    - craftservepaysign.subscribe
+  craftservepaysign.ad:
+    description: 'Gives access to print Craftserve advertisement.'
+    default: op
+  craftservepaysign.create:
+    description: 'Gives access to create payment signs.'
+    default: true
+  craftservepaysign.use:
+    description: 'Gives access to use payment signs.'
+    default: true
