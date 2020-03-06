@@ -73,7 +73,11 @@ public class Trigger implements Listener, Predicate<Block> {
         return this.baseBlock != null && this.baseBlock.equals(block);
     }
 
-    public void execute() {
+    public SignData getSignData() {
+        return this.signData;
+    }
+
+    public Switch execute() {
         logger.finer("Registering events for trigger.");
         this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
         this.baseBlock = this.signData.getBaseBlock();
@@ -83,9 +87,10 @@ public class Trigger implements Listener, Predicate<Block> {
         this.playSound(SOUND_ON, .6F);
 
         this.updateBaseBlockNeighbors();
+        return button;
     }
 
-    private Switch createFakeButton() {
+    public Switch createFakeButton() {
         logger.fine("Creating fake button.");
         BlockFace facing = this.signData.getFacing();
         Switch button = BUTTON_FACTORY.get();

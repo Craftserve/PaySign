@@ -23,6 +23,7 @@ import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.type.Switch;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -59,6 +60,7 @@ public final class PaySignPlugin extends JavaPlugin implements Listener {
     private SignDataParser signDataParser;
     private Economy economy;
 
+    private LogBlockHook logBlockHook;
     private CraftserveListener craftserveListener;
 
     @Override
@@ -95,6 +97,11 @@ public final class PaySignPlugin extends JavaPlugin implements Listener {
                 this.setEnabled(false);
             }
         });
+
+        if (pluginManager.getPlugin("LogBlock") != null) {
+            logger.info("Enabling LogBlock hook...");
+            this.logBlockHook = new LogBlockHook();
+        }
 
         this.craftserveListener = new CraftserveListener(this, pluginManager, scheduler);
         this.craftserveListener.enable();
@@ -165,19 +172,27 @@ public final class PaySignPlugin extends JavaPlugin implements Listener {
             return;
         }
 
+        BukkitScheduler scheduler = this.getServer().getScheduler();
         logger.info(player.getName() + " is triggering PaySign sign at " + sign.getLocation());
-        Trigger trigger = new Trigger(this, signData);
-        this.activeTriggers.addLast(trigger);
 
-        trigger.execute();
+        // Execute in next tick so that PlayerInteractEvent is handled properly
+        scheduler.runTask(this, () -> {
+            Trigger trigger = new Trigger(this, signData);
+            this.activeTriggers.addLast(trigger);
 
-        this.getServer().getScheduler().runTaskLater(this, () -> {
-            try {
-                trigger.flush();
-            } finally {
-                this.activeTriggers.remove(trigger);
+            Switch fakeButton = trigger.execute();
+            if (this.logBlockHook != null) {
+                this.logBlockHook.logClick(player, trigger, fakeButton);
             }
-        }, signData.getDelay().orElse(this.configuration.delay()));
+
+            scheduler.runTaskLater(this, () -> {
+                try {
+                    trigger.flush();
+                } finally {
+                    this.activeTriggers.remove(trigger);
+                }
+            }, signData.getDelay().orElse(this.configuration.delay()));
+        });
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

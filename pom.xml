@@ -76,6 +76,13 @@
         </dependency>
 
         <dependency>
+            <groupId>de.diddiz</groupId>
+            <artifactId>logblock</artifactId>
+            <version>1.15.1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>pl.craftserve.metrics</groupId>
             <artifactId>plugin-metrics-lite</artifactId>
             <version>0.1</version>
