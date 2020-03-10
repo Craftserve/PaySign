@@ -14,8 +14,8 @@ permissions:
     default: op
     children:
     - craftservepaysign.ad
-    - craftservepaysign.bypass
-    - craftservepaysign.subscribe
+    - craftservepaysign.create
+    - craftservepaysign.use
   craftservepaysign.ad:
     description: 'Gives access to print Craftserve advertisement.'
     default: op
