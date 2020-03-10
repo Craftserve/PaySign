@@ -40,6 +40,10 @@ public abstract class MessageRenderer {
         return this.error("You don't have permission to create this sign.");
     }
 
+    public String noPermissionToCreateOther() {
+        return this.error("You don't have permission to create this sign for other players.");
+    }
+
     public String noPermissionToUse() {
         return this.error("You don't have permission to use this sign.");
     }

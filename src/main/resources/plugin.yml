@@ -15,12 +15,16 @@ permissions:
     children:
     - craftservepaysign.ad
     - craftservepaysign.create
+    - craftservepaysign.create.other
     - craftservepaysign.use
   craftservepaysign.ad:
     description: 'Gives access to print Craftserve advertisement.'
     default: op
   craftservepaysign.create:
     description: 'Gives access to create payment signs.'
+    default: true
+  craftservepaysign.create.other:
+    description: 'Gives access to create payment signs for other players.'
     default: true
   craftservepaysign.use:
     description: 'Gives access to use payment signs.'

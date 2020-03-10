@@ -51,6 +51,7 @@ public final class PaySignPlugin extends JavaPlugin implements Listener {
     static final Logger logger = Logger.getLogger(PaySignPlugin.class.getName());
 
     private static final String PERMISSION_CREATE = "craftservepaysign.create";
+    private static final String PERMISSION_CREATE_OTHER = PERMISSION_CREATE + ".other";
     private static final String PERMISSION_USE = "craftservepaysign.use";
 
     private final Deque<Trigger> activeTriggers = new ArrayDeque<>(512);
@@ -225,6 +226,12 @@ public final class PaySignPlugin extends JavaPlugin implements Listener {
         if (!player.hasPermission(PERMISSION_CREATE)) {
             logger.fine("The player is not permitted to create the sign.");
             this.cancel(event, this.messageRenderer.noPermissionToCreate());
+            return;
+        }
+
+        if (!signData.getPlayerName().equalsIgnoreCase(player.getName()) && !player.hasPermission(PERMISSION_CREATE_OTHER)) {
+            logger.fine("The player is not permitted to create the sign for other players.");
+            this.cancel(event, this.messageRenderer.noPermissionToCreateOther());
             return;
         }
 
