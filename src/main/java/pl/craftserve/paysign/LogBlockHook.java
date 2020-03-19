@@ -43,7 +43,7 @@ public class LogBlockHook {
         }
 
         Actor actor = Actor.actorFromEntity(player);
-        Location location = trigger.getSignData().getSign().getLocation();
+        Location location = trigger.getPaySign().getSign().getLocation();
         consumer.queueBlock(actor, location, this.switchOff(fakeButton), fakeButton);
     }
 

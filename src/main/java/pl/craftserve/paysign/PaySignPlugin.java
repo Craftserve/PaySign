@@ -149,13 +149,13 @@ public final class PaySignPlugin extends JavaPlugin implements Listener {
         }
         Sign sign = (Sign) state;
 
-        SignData signData;
+        PaySign paySign;
         try {
-            Optional<SignData> signDataMaybe = this.signDataParser.parse(sign);
-            if (!signDataMaybe.isPresent()) {
+            Optional<PaySign> paySignMaybe = this.signDataParser.parse(sign);
+            if (!paySignMaybe.isPresent()) {
                 return;
             }
-            signData = signDataMaybe.get();
+            paySign = paySignMaybe.get();
         } catch (SignDataParser.ParseException ignored) {
             logger.fine("Could not parse target sign data.");
             return;
@@ -169,7 +169,7 @@ public final class PaySignPlugin extends JavaPlugin implements Listener {
             return;
         }
 
-        if (!signData.pay(player, this.messageRenderer, this.economy, this.configuration.allowDecimals())) {
+        if (!paySign.pay(player, this.messageRenderer, this.economy, this.configuration.allowDecimals())) {
             return;
         }
 
@@ -178,7 +178,7 @@ public final class PaySignPlugin extends JavaPlugin implements Listener {
 
         // Execute in next tick so that PlayerInteractEvent is handled properly
         scheduler.runTask(this, () -> {
-            Trigger trigger = new Trigger(this, signData);
+            Trigger trigger = new Trigger(this, paySign);
             this.activeTriggers.addLast(trigger);
 
             Switch fakeButton = trigger.execute();
@@ -192,7 +192,7 @@ public final class PaySignPlugin extends JavaPlugin implements Listener {
                 } finally {
                     this.activeTriggers.remove(trigger);
                 }
-            }, signData.getDelay().orElse(this.configuration.delay()));
+            }, paySign.getDelay().orElse(this.configuration.delay()));
         });
     }
 
@@ -207,14 +207,14 @@ public final class PaySignPlugin extends JavaPlugin implements Listener {
         }
         Sign sign = (Sign) state;
 
-        SignData signData;
+        PaySign paySign;
         try {
-            Optional<SignData> signDataMaybe = this.signDataParser.parse(sign, event.getLines());
-            if (!signDataMaybe.isPresent()) {
+            Optional<PaySign> paySignMaybe = this.signDataParser.parse(sign, event.getLines());
+            if (!paySignMaybe.isPresent()) {
                 // not PaySign sign
                 return;
             }
-            signData = signDataMaybe.get();
+            paySign = paySignMaybe.get();
         } catch (SignDataParser.ParseException e) {
             logger.fine("Could not parse target sign data.");
             this.cancel(event, player.hasPermission(PERMISSION_CREATE)
@@ -229,20 +229,20 @@ public final class PaySignPlugin extends JavaPlugin implements Listener {
             return;
         }
 
-        if (!signData.getPlayerName().equalsIgnoreCase(player.getName()) && !player.hasPermission(PERMISSION_CREATE_OTHER)) {
+        if (!paySign.getPlayerName().equalsIgnoreCase(player.getName()) && !player.hasPermission(PERMISSION_CREATE_OTHER)) {
             logger.fine("The player is not permitted to create the sign for other players.");
             this.cancel(event, this.messageRenderer.noPermissionToCreateOther());
             return;
         }
 
-        if (!this.configuration.allowDecimals() && signData.getPrice() != signData.getPrice(false)) {
+        if (!this.configuration.allowDecimals() && paySign.getPrice() != paySign.getPrice(false)) {
             logger.fine("Decimal prices aren't enabled on this server.");
             this.cancel(event, this.messageRenderer.disabledDecimals());
             return;
         }
 
         logger.info(player.getName() + " is creating a new PaySign sign at " + sign.getLocation());
-        event.setLine(0, SignData.NAMESPACE_COLOR + SignData.NAMESPACE);
+        event.setLine(0, PaySign.NAMESPACE_COLOR + PaySign.NAMESPACE);
         player.sendMessage(this.messageRenderer.createdSuccessfully());
     }
 

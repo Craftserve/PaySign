@@ -24,21 +24,21 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Parsers {@link SignData} from {@link Sign}s or directly from its lines.
+ * Parsers {@link PaySign} from {@link Sign}s or directly from its lines.
  */
 public class SignDataParser {
-    public Optional<SignData> parse(Sign sign) throws ParseException {
+    public Optional<PaySign> parse(Sign sign) throws ParseException {
         Objects.requireNonNull(sign, "sign");
         return this.parse(sign, sign.getLines());
     }
 
-    public Optional<SignData> parse(Sign sign, String[] lines) throws ParseException {
+    public Optional<PaySign> parse(Sign sign, String[] lines) throws ParseException {
         Objects.requireNonNull(sign, "sign");
         Objects.requireNonNull(lines, "lines");
         Preconditions.checkArgument(lines.length == 4, "4 lines expected, " + lines.length + " given");
 
         // identifier
-        if (!ChatColor.stripColor(lines[0]).equals(SignData.NAMESPACE)) {
+        if (!ChatColor.stripColor(lines[0]).equals(PaySign.NAMESPACE)) {
             return Optional.empty();
         }
 
@@ -78,7 +78,7 @@ public class SignDataParser {
             }
         }
 
-        return Optional.of(new SignData(sign, playerName, price, delay));
+        return Optional.of(new PaySign(sign, playerName, price, delay));
     }
 
     public static class ParseException extends Exception {

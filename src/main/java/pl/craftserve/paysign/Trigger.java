@@ -45,7 +45,7 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
- * Triggers current for {@link SignData}s.
+ * Triggers current for {@link PaySign}s.
  */
 public class Trigger implements Listener, Predicate<Block> {
     static final Logger logger = Logger.getLogger(Trigger.class.getName());
@@ -57,33 +57,33 @@ public class Trigger implements Listener, Predicate<Block> {
     private static final float SOUND_VOLUME = .3F;
 
     private final Plugin plugin;
-    private final SignData signData;
+    private final PaySign paySign;
     private Block baseBlock;
 
-    public Trigger(Plugin plugin, SignData signData) {
+    public Trigger(Plugin plugin, PaySign paySign) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
-        this.signData = Objects.requireNonNull(signData, "signData");
+        this.paySign = Objects.requireNonNull(paySign, "paySign");
     }
 
     @Override
     public boolean test(Block block) {
-        if (this.signData.getSign().getBlock().equals(block)) {
+        if (this.paySign.getSign().getBlock().equals(block)) {
             return true;
         }
         return this.baseBlock != null && this.baseBlock.equals(block);
     }
 
-    public SignData getSignData() {
-        return this.signData;
+    public PaySign getPaySign() {
+        return this.paySign;
     }
 
     public Switch execute() {
         logger.finer("Registering events for trigger.");
         this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
-        this.baseBlock = this.signData.getBaseBlock();
+        this.baseBlock = this.paySign.getBaseBlock();
 
         Switch button = this.createFakeButton();
-        this.signData.getSign().getBlock().setBlockData(button);
+        this.paySign.getSign().getBlock().setBlockData(button);
         this.playSound(SOUND_ON, .6F);
 
         this.updateBaseBlockNeighbors();
@@ -92,7 +92,7 @@ public class Trigger implements Listener, Predicate<Block> {
 
     public Switch createFakeButton() {
         logger.fine("Creating fake button.");
-        BlockFace facing = this.signData.getFacing();
+        BlockFace facing = this.paySign.getFacing();
         Switch button = BUTTON_FACTORY.get();
 
         button.setFace(facing.equals(BlockFace.UP) ? Switch.Face.FLOOR : Switch.Face.WALL);
@@ -103,7 +103,7 @@ public class Trigger implements Listener, Predicate<Block> {
 
     private void playSound(Sound sound, float pitch) {
         Objects.requireNonNull(sound, "sound");
-        Sign sign = this.signData.getSign();
+        Sign sign = this.paySign.getSign();
         sign.getWorld().playSound(sign.getLocation(), sound, SoundCategory.BLOCKS, SOUND_VOLUME, pitch);
     }
 
@@ -120,7 +120,7 @@ public class Trigger implements Listener, Predicate<Block> {
     public void flush() {
         logger.fine("Restoring fake button back to the sign.");
         try {
-            this.signData.getSign().update(true, true);
+            this.paySign.getSign().update(true, true);
             this.playSound(SOUND_OFF, .5F);
             this.updateBaseBlockNeighbors();
         } finally {

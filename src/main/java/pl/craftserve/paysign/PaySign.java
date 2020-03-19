@@ -37,8 +37,8 @@ import java.util.logging.Logger;
 /**
  * Represents a PaySign sign.
  */
-public class SignData {
-    static final Logger logger = Logger.getLogger(SignData.class.getName());
+public class PaySign {
+    static final Logger logger = Logger.getLogger(PaySign.class.getName());
 
     protected static final String NAMESPACE = "[PaySign]";
     protected static final ChatColor NAMESPACE_COLOR = ChatColor.DARK_GREEN;
@@ -48,7 +48,7 @@ public class SignData {
     private final double price;
     private final int delay;
 
-    public SignData(Sign sign, String playerName, double price, int delay) {
+    public PaySign(Sign sign, String playerName, double price, int delay) {
         this.sign = Objects.requireNonNull(sign, "sign");
         this.playerName = Objects.requireNonNull(playerName, "playerName");
         this.price = price;
