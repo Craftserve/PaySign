@@ -24,8 +24,12 @@ import org.bukkit.block.data.type.Switch;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LogBlockHook {
+    static final Logger logger = Logger.getLogger(LogBlockHook.class.getName());
+
     /**
      * Logs click action on the sign to the LogBlock {@link Consumer}.
      * @param player Who clicked
@@ -44,7 +48,12 @@ public class LogBlockHook {
 
         Actor actor = Actor.actorFromEntity(player);
         Location location = trigger.getPaySign().getSign().getLocation();
-        consumer.queueBlock(actor, location, this.switchOff(fakeButton), fakeButton);
+
+        try {
+            consumer.queueBlock(actor, location, this.switchOff(fakeButton), fakeButton);
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, "Could not log click to LogBlock.", e);
+        }
     }
 
     private Consumer getConsumer() {
