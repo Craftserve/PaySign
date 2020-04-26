@@ -76,9 +76,9 @@
         </dependency>
 
         <dependency>
-            <groupId>de.diddiz</groupId>
-            <artifactId>logblock</artifactId>
-            <version>1.15.1.1-SNAPSHOT</version>
+            <groupId>com.github.LogBlock</groupId>
+            <artifactId>LogBlock</artifactId>
+            <version>master-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
